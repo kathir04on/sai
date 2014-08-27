@@ -247,6 +247,61 @@ function students($y)
 </html>
 
 
+DATA BASE : 
+=============
+CREATE TABLE IF NOT EXISTS `attendance` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `student_id` varchar(50) NOT NULL,
+  `class1` varchar(50) NOT NULL,
+  `class2` varchar(50) NOT NULL,
+  `class3` varchar(50) NOT NULL,
+  `class4` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+
+
+
+CREATE TABLE IF NOT EXISTS `classes` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `classes` varchar(10) NOT NULL,
+  `status` char(1) NOT NULL DEFAULT 'Y',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+
+--
+-- Dumping data for table `classes`
+--
+
+INSERT INTO `classes` (`id`, `classes`, `status`) VALUES
+(1, 'class1', 'Y'),
+(2, 'class2', 'Y'),
+(3, 'class3', 'Y'),
+(4, 'class4', 'Y');
+
+
+CREATE TABLE IF NOT EXISTS `students` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `student_id` varchar(50) NOT NULL,
+  `status` char(1) NOT NULL DEFAULT 'Y',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+
+--
+-- Dumping data for table `students`
+--
+
+INSERT INTO `students` (`id`, `student_id`, `status`) VALUES
+(1, 'student1', 'Y'),
+(2, 'student2', 'Y'),
+(3, 'student3', 'Y'),
+(4, 'student4', 'Y'),
+(5, 'student5', 'Y'),
+(6, 'student6', 'Y');
+
+
+
+
+
 
 
 
