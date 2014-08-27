@@ -1,17 +1,13 @@
-sai
-===
-
-form page : 
-===========
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="java.sql.*,java.util.*"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+fORM  CODE :   ATTENDANCE.PHP
+=============================
+ <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
  <script src="js/jquery.js"></script>
-<script type="text/javascript">
+
+ <script type="text/javascript">
 
 var resultQuery="";
 function clickMe(students,classes,classString,stuString)
@@ -19,9 +15,9 @@ function clickMe(students,classes,classString,stuString)
 	
 	resultQuery="";
 	$('#result_table').empty();
-	var splitClass=classString.split(",");
+	var splitClass = classString.split(",");
 	
-	var splitStudent=stuString.split(",");
+	var splitStudent = stuString.split(",");
 
 	for(var z=0;z<splitStudent.length-1;z++)
 	{
@@ -57,103 +53,120 @@ function clickMe(students,classes,classString,stuString)
 	
 	$('#result_table').append(resultQuery);
 }
-</script>
+
+</script> 
+
 </head>
 <body>
 <table>
-<%
-Connection c = null;
-try {
-	Class.forName("com.mysql.jdbc.Driver");
-	c = DriverManager.getConnection(
-			"jdbc:mysql://localhost:3306/sai", "root", "whbs@123");
-	Statement s = c.createStatement();
-	ResultSet rs=s.executeQuery("select id,classes from classes");
-	rs.last();
-	int classcount=rs.getRow();
-	rs.beforeFirst();
+<?php 
+  $con = mysql_connect("localhost","root","whbs@123");
+  $db = mysql_select_db("attendance", $con);
+ 
+function classes($x)  
+{  
+   return($x);  
+}  
+ 
+function students($y)  
+{  
+   return($y);  
+}
+
+  $a = array();
+  $a1 = array();
+	$rs = mysql_query("select id,classes from classes");
 	
-	String classString="";
-	Map<Integer,String> classmap=new HashMap<Integer,String>();
-	%>
+	$classcount=mysql_num_rows($rs);
+
+	$classString="";
+      
+	?>
 	<tr>
 	<th>Students/Classes</th>
-	<%
-	while(rs.next())
+	<?php
+	while($row = mysql_fetch_array($rs))
 	{
-		classString=classString+rs.getString(2)+",";
-		classmap.put(rs.getInt(1), rs.getString(2));
-		%>
-		<th><%=rs.getString(2) %></th>
-		<%
+		  $classString = $classString . $row['classes'].",";
+                  array_push($a , $row['classes']);
+                  
+                  $b = array_map("classes",$a);
+		
+		?>
+		<th> <?php echo $row['classes'];  ?> </th>
+		<?php
 	}
 	
-	//System.out.println(classString);
-	%>
+      
+	
+	?>
 	</tr>
-	<%
-	Statement s1 = c.createStatement();
-	ResultSet rs1=s1.executeQuery("select id,students from atstudent");
-	Map<Integer,String> stumap=new HashMap<Integer,String>();
-	String stuString="";
-	while(rs1.next())
+
+	<?php
+	
+	$rs1 = mysql_query("select id,student_id from students");
+	
+	$stucount = mysql_num_rows($rs);
+
+	$stuString = "";
+	while($row1= mysql_fetch_array($rs1))
 	{
-		stuString=stuString+rs1.getString(2)+",";
-		stumap.put(rs1.getInt(1), rs1.getString(2));
+		$stuString = $stuString . $row1['student_id'] . ",";
+		// stumap.put(rs1.getInt(1), rs1.getString(2));
+                 array_push($a1,$row1['student_id']);
+                 $c = array_map("students",$a1);
+		
 	}
+
+
 	
-	//System.out.println(classmap+" "+stumap);
-	rs1.last();
-	int stucount=rs1.getRow();
-	rs1.beforeFirst();
-	
-	for(int i=0;i<stumap.size();i++)
+	for($i=0; $i<sizeof($c);$i++)
 	{
-		%>
+		?>
+
 		<tr>
-		<td><%=stumap.get(i+1) %></td>
-		<%
-		for(int j=0;j<classmap.size();j++)
+		<td> <?php echo $c[$i] ?> </td>
+		<?php
+
+		for($j=0;$j<sizeof($b);$j++)
 		{
-			%>
+			?>
 			<td>
-			<input type="text" id="<%=i%>_<%=j%>"/>
+			<input type="text" id="<?php echo $i ?>_<?php echo $j ?>"/>
 			</td>
-			<%
+			<?php
 		}
-		%>
+		?>
 		</tr>
-		<%
-	if(stumap.size()==i+1)
+		<?php
+	if(sizeof($c) == $i+1)
 	{
-		%>
-		<tr><td>total</td>
-		<%
-		for(int z=0;z<classmap.size();z++)
+                
+		?>
+		<tr><td>total </td>
+		<?php
+		for($z=0;$z<sizeof($b);$z++)
 		{
-			%>
-			<td><input type="text" id="<%=stumap.size()%>_<%=z%>"/></td>
-			<%
+			?>
+
+			<td> <input type="text" id="<?php echo sizeof($c) ?>_<?php echo $z; ?>"/> </td>
+			<?php
 		}
-		%>
+		?>
+
 		</tr>
-		<%
+		<?php
 	}
+
 	} 
-%>
-<tr><td><input type="button" value="submit" onclick="clickMe('<%=stumap.size()%>','<%=classmap.size()%>','<%=classString%>','<%=stuString%>')"/></td></tr>
 
-<%
-}
-catch(Exception e)
-{
-	
-}
+?>
+<tr><td><input type="button" value="submit" onclick="clickMe('<?php echo sizeof($c) ?>','<?php echo sizeof($b) ;?>',
+'<?php echo $classString; ?>','<?php echo $stuString; ?>')"/></td></tr>
 
-%>
 </table>
 <div>
-<form action="saiInsert.jsp">
+<form action="attendance_entry.php" method="post">
 <table id="result_table">
 
 </table>
@@ -162,15 +175,8 @@ catch(Exception e)
 </body>
 </html>
 
-
-=============================
-Insert Code : 
--------------------
-
-
-<%@page import="java.util.HashMap"%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="java.sql.*,java.util.*"%>
+Insert Code : attendance_entry.php : 
+===================================
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -178,58 +184,70 @@ Insert Code :
 <title>Insert title here</title>
 </head>
 <body>
-<%
-Connection c = null;
-try {
-	Class.forName("com.mysql.jdbc.Driver");
-	c = DriverManager.getConnection(
-			"jdbc:mysql://localhost:3306/sai", "root", "whbs@123");
-	Statement s = c.createStatement();
-	ResultSet rs=s.executeQuery("select id,classes from classes");
+
+<?php 
+$con = mysql_connect("localhost","root","whbs@123");
+$db = mysql_select_db("attendance", $con);
+   
+$a = array();
+$a1= array();
 	
-	Map<Integer,String> classmap=new HashMap<Integer,String>();
 	
-	while(rs.next())
+function classes($x)  
+{  
+   return($x);  
+}  
+ 
+function students($y)  
+{  
+   return($y);  
+}  
+
+ $rs = mysql_query("select id,classes from classes");
+	while($row = mysql_fetch_array($rs))
 	{
-		classmap.put(rs.getInt(1), rs.getString(2));
+                array_push($a,$row['classes']);
+		$b = array_map("classes",$a);
 		
 	}
-	Statement s1 = c.createStatement();
 	
-	ResultSet rs1=s1.executeQuery("select id,students from atstudent");
-	
-	Map<Integer,String> stumap=new HashMap<Integer,String>();
-	
-	while(rs1.next())
+
+     $rs1=mysql_query("select id,student_id from students");
+	while($row1 = mysql_fetch_array($rs1))
 	{
-		stumap.put(rs1.getInt(1), rs1.getString(2));
+		 array_push($a1 ,$row1['student_id']);
+		 $c = array_map("students",$a1);
 	}
 	
-	Statement s4 = c.createStatement();
 	
-	int n4=s4.executeUpdate("truncate table attendence");
+	print_r($c);
+
+	$truncate = mysql_query("truncate table attendance");
 	
-	for(int i=0;i<stumap.size();i++)
+	for($i=0;$i<sizeof($c);$i++)
 	{
-		
-		Statement s2 = c.createStatement();
-		int n=s2.executeUpdate("insert into attendence(stu_id) values('"+stumap.get(i+1)+"')");
-		for(int j=0;j<classmap.size();j++)
+
+
+
+		$n = mysql_query("insert into attendance(student_id) values ('".$c[$i]."')");
+		for($j=0;$j<sizeof($b);$j++)
 		{
-			String requestData=request.getParameter(i+"_"+j);
+			$requestData = $_POST[$i."_".$j];
 			
-			Statement s3 = c.createStatement();
-			int n1=s3.executeUpdate("update attendence set "+classmap.get(j+1)+"='"+requestData+"' where stu_id='"+stumap.get(i+1)+"'");
+			 $n1 = mysql_query("update attendance set ".$b[$j]."='".$requestData."' where student_id='".$c[$i]."'");
 		}
 	}
 	
-	out.println("Inserted Successfully");
-}
-catch(Exception e)
-{
-	
-}
+	echo "Inserted Successfully";
+        
 
-%>
+
+?>
 </body>
-</h
+</html>
+
+
+
+
+
+
